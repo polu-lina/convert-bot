@@ -1,6 +1,7 @@
 const botClient = require('bot-client');
 //const nodePandoc = require('node-pandoc');
 const pandoc = require('simple-pandoc'); 
+var request_out = require('request');
 var http = require('http');
 var fs = require('fs');
 const path = require('path');
@@ -62,6 +63,10 @@ comment.onDirect(async (message) => {
     size: fileSizeInBytes
   }
   const bucket = await file.getPUTUrl(teamId, query)
+  const req = request_out.post(bucket.data.url)
+  req.form().append('file', fs.createReadStream(file_puth))
+  const att = [{ type: 'file', data: { id: bucket.data.url } }];
+  await comment.create(teamId, { to, att });
   // const result = await readFileAsArrayBuffer(file_puth)
   // console.log("result >>", result);
   // const request_out = new XMLHttpRequest()
@@ -70,17 +75,17 @@ comment.onDirect(async (message) => {
   // formData.append('file', file_puth)
   // request_out.open('POST', bucket.data.url, true)
   // request_out.send(formData)
-  await http.request({
-      method: 'POST',
-      url: bucket.data.url,
-      headers: {
-        'Cache-Control': 'public,max-age=3600',
-        // 'Content-Length': file.size,
-        'Content-Type': "application/pdf"
+  // await http.request({
+  //     method: 'POST',
+  //     url: bucket.data.url,
+  //     headers: {
+  //       'Cache-Control': 'public,max-age=3600',
+  //       // 'Content-Length': file.size,
+  //       'Content-Type': "application/pdf"
 
-      },
-      body: file_puth
-    });
+  //     },
+  //     body: file_puth
+  //   });
 
 //   // Обработка файла 
 
