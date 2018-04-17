@@ -64,17 +64,23 @@ comment.onDirect(async (message) => {
   const bucket = await file.getPUTUrl(teamId, query)
   // const result = await readFileAsArrayBuffer(file_puth)
   // console.log("result >>", result);
- await http.request({
-    method: 'PUT',
-    url: bucket.data.url,
-    headers: {
-      'Cache-Control': 'public,max-age=3600',
-      // 'Content-Length': file.size,
-      'Content-Type': "application/pdf"
+  // const request_out = new XMLHttpRequest()
+  // const formData = new FormData()
+  // formData.append('Content-Type', "application/pdf")
+  // formData.append('file', file_puth)
+  // request_out.open('POST', bucket.data.url, true)
+  // request_out.send(formData)
+  await http.request({
+      method: 'POST',
+      url: bucket.data.url,
+      headers: {
+        'Cache-Control': 'public,max-age=3600',
+        // 'Content-Length': file.size,
+        'Content-Type': "application/pdf"
 
-    },
-    body: file_puth
-  });
+      },
+      body: file_puth
+    });
 
 //   // Обработка файла 
 
