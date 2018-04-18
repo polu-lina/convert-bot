@@ -1,0 +1,22 @@
+{
+  "name": "bot-convert",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "WS_ENDPOINT=https://ws-bots.teslatele.com/ nodemon bot.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bot-client": "git+https://github.com/xenbyte/bot-client.git",
+    "node-pandoc": "^0.3.0",
+    "nodemon": "^1.17.1",
+    "office-converter": "^1.0.2",
+    "request": "^2.85.0",
+    "simple-pandoc": "^0.1.0",
+    "workonflow-bot-client": "0.0.5"
+  }
+}

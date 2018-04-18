@@ -22,7 +22,19 @@ comment.onDirect(async (message) => {
   const { teamId } = message;
   const to = message.data.content.from;
   const { data: { text } } = message.data.content.att[0];
+  console.log("text >> ", text);
+  if (message.data.content.att[1] == undefined){
+    if (text.match(/Hello! You are hired!/)) {
+      const att = [{ type: 'text', data: { text: 'Привет, я бот-конвертер. Я помогаю преобразовывать файлы в формат pdf. Чтобы начать работу, отправь мне текстовый файл.' } }];
+      await comment.create(teamId, { to, att });
+      return;
+    }
+    const att = [{ type: 'text', data: { text: 'Пожалуйста, отправь мне файл!' } }];
+    await comment.create(teamId, { to, att });
+    return;
+  }
   const fileId = message.data.content.att[1].data.id;
+  console.log("Id >> ", fileId);
 
   const response = await file.getGETUrl(teamId, { id: fileId });
 
@@ -52,21 +64,31 @@ comment.onDirect(async (message) => {
   const outputStream = fs.createWriteStream(output_file);
   htmlToMarkdown.stream(inputStream).pipe(outputStream);
 
-  const file_puth = './' + file_name;
+  const file_puth = './' + output_file
   console.log("file >> ", file_puth);
   const stats = fs.statSync(file_puth);
   const fileSizeInBytes = stats.size;
 
   const query = {
-    filename: file_name,
+    filename: output_file,
     authorId: '5a95256220b3170023294729',
     size: fileSizeInBytes
   }
   const bucket = await file.getPUTUrl(teamId, query)
   const req = request_out.post(bucket.data.url)
+  console.log("URL >>", bucket.data.url);
   req.form().append('file', fs.createReadStream(file_puth))
   const att = [{ type: 'file', data: { id: bucket.data.url } }];
   await comment.create(teamId, { to, att });
+  file_name = './' + file_name;
+  fs.unlink(file_name, (err) => {
+    if (err) throw err;
+    console.log(file_name, ' was deleted');
+  });
+  fs.unlink(output_file, (err) => {
+    if (err) throw err;
+    console.log(output_file, ' was deleted');
+  });
   // const result = await readFileAsArrayBuffer(file_puth)
   // console.log("result >>", result);
   // const request_out = new XMLHttpRequest()
